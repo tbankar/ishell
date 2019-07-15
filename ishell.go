@@ -513,8 +513,10 @@ func (s *Shell) multiChoice(options []string, text string, init []int, multiResu
 	defer s.ShowPrompt(true)
 
 	// TODO this may not work on windows.
-	s.Print("\033[?25l")
-	defer s.Print("\033[?25h")
+	if runtime.GOOS != "windows" {
+		s.Print("\033[?25l")
+		defer s.Print("\033[?25h")
+	}
 
 	cur := 0
 	if len(selected) > 0 {
@@ -538,6 +540,7 @@ func (s *Shell) multiChoice(options []string, text string, init []int, multiResu
 		if len(strs) > maxRows-1 {
 			strs = strs[offset : maxRows+offset-1]
 		}
+		s.ClearScreen()
 		s.Print("\033[0;0H")
 		// clear from the cursor to the end of the screen
 		s.Print("\033[0J")
